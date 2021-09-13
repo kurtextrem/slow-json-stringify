@@ -29,7 +29,7 @@ const __find = (path) => {
   return eval(`(obj=>${str})`);
 };
 
-const _arraySerializer = (serializer, array) => {
+function _arraySerializer(serializer, array) {
   // Stringifying more complex array using the provided sjs schema
   let acc = '';
   const len = array.length - 1;
@@ -52,7 +52,7 @@ const _makeArraySerializer = (serializer) => {
   return JSON.stringify;
 };
 
-const _arrayNullSerializer = (serializer, array) => {
+function _arrayNullSerializer(serializer, array) {
   if (array === null) return 'null';
   serializer(array);
 }
@@ -83,7 +83,7 @@ function checkType(type) {
 const fnUser = (value) => value;
 
 /**
- * @param type number|string|boolean|array|null
+ * @param type number|string|boolean|array|null|nullArray
  * @param serializer
  * @returns
  */

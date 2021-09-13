@@ -337,10 +337,9 @@ describe('Slow-json-stringify tests', () => {
 
   it('Should stringify nullArray correctly', () => {
     const stringify = sjs({
-      a: attr('nullArray',
-        sjs({
-          b: attr('string'),
-        })),
+      a: attr('nullArray', sjs({
+        b: attr('string'),
+      })),
     });
 
     const test = {

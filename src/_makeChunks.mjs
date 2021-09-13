@@ -1,9 +1,10 @@
 const _stringRegex = /string/;
 
-const _replaceString = (type) =>
-  _stringRegex.test(type) ? '"__par__"' : "__par__";
+const _replaceString = (type) => _stringRegex.test(type) ? '"__par__"' : "__par__";
 
 const _isLastRegex = /^("}|})/;
+
+const chunkRegex = /"\w+__sjs"/gm;
 
 // 3 possibilities after arbitrary property:
 // - ", => non-last string property
@@ -18,11 +19,12 @@ const _matchStartRe = /^(\"\,|\,|\")/;
  * chunks used in different scenarios.
  */
 const _makeChunks = (str, queue) => {
+  chunkRegex.lastIndex = 0;
   const chunks = str
       // Matching prepared properties and replacing with target with or without
       // double quotes.
       // => Avoiding unnecessary concatenation of doublequotes during serialization.
-      .replace(/"\w+__sjs"/gm, _replaceString)
+      .replace(chunkRegex, _replaceString)
       .split("__par__"),
     result = [];
 
@@ -32,7 +34,7 @@ const _makeChunks = (str, queue) => {
     // Using dynamic regex to ensure that only the correct property
     // at the end of the string it's actually selected.
     // => e.g. ,"a":{"a": => ,"a":{
-    const matchProp = `("${(queue[i] || {}).name}":(\"?))$`;
+    const matchProp = `("${queue[i]?.name}":(\"?))$`;
 
     // Check if current chunk is the last one inside a nested property
     const isLast = _isLastRegex.test(chunks[i + 1] || "");
