@@ -70,8 +70,7 @@ const TYPES = {
   nullArray: _makeNullArraySerializer,
 };
 
-/* #__PURE__ */
-function checkType(type) {
+/* #__PURE__ */function checkType(type) {
   if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && TYPES[type] === undefined) {
     throw new Error(
       `Expected one of: "number", "string", "boolean", "array", "null", "nullArray". received "${type}" instead`,
