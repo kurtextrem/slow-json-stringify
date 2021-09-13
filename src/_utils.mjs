@@ -39,7 +39,6 @@ function _arraySerializer(serializer, array) {
 
   // Prevent slice for removing unnecessary comma.
   acc += serializer(array[len]);
-  console.log(acc);
   return `[${acc}]`;
 }
 
@@ -54,7 +53,7 @@ const _makeArraySerializer = (serializer) => {
 
 function _arrayNullSerializer(serializer, array) {
   if (array === null) return 'null';
-  serializer(array);
+  return serializer(array);
 }
 
 const _makeNullArraySerializer = (serializer) => {
