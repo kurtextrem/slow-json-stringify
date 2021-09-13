@@ -29,42 +29,58 @@ const __find = (path) => {
   return eval(`(obj=>${str})`);
 };
 
+const _arraySerializer = (serializer, array) => {
+  // Stringifying more complex array using the provided sjs schema
+  let acc = '';
+  const len = array.length - 1;
+  for (let i = 0; i < len; ++i) {
+    acc += `${serializer(array[i])},`;
+  }
+
+  // Prevent slice for removing unnecessary comma.
+  acc += serializer(array[len]);
+  console.log(acc);
+  return `[${acc}]`;
+}
+
 /**
  * `_makeArraySerializer` is simply a wrapper of another `sjs` schema
  * used for the serialization of arrais.
- *
- * @param {array} array - Array to serialize.
- * @param {any} method - `sjs` serializer.
  */
 const _makeArraySerializer = (serializer) => {
-  if (serializer instanceof Function) {
-    return (array) => {
-      // Stringifying more complex array using the provided sjs schema
-      let acc = '';
-      const len = array.length - 1;
-      for (let i = 0; i < len; ++i) {
-        acc += `${serializer(array[i])},`;
-      }
-
-      // Prevent slice for removing unnecessary comma.
-      acc += serializer(array[len]);
-      return `[${acc}]`;
-    };
-  }
-
-  return array => JSON.stringify(array);
+  if (serializer instanceof Function) return _arraySerializer.bind(null, serializer);
+  return JSON.stringify;
 };
 
-const TYPES = ['number', 'string', 'boolean', 'array', 'null'];
+const _arrayNullSerializer = (serializer, array) => {
+  if (array === null) return 'null';
+  serializer(array);
+}
 
-/*#__PURE__*/
+const _makeNullArraySerializer = (serializer) => {
+  const arraySerliazer = _makeArraySerializer(serializer);
+  return _arrayNullSerializer.bind(null, arraySerliazer);
+};
+
+const TYPES = {
+  number: null,
+  string: null,
+  boolean: null,
+  array: _makeArraySerializer,
+  null: null,
+  nullArray: _makeNullArraySerializer,
+};
+
+/* #__PURE__ */
 function checkType(type) {
-  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && !TYPES.includes(type)) {
+  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production' && TYPES[type] === undefined) {
     throw new Error(
-      `Expected one of: "number", "string", "boolean", "array", "null". received "${type}" instead`,
+      `Expected one of: "number", "string", "boolean", "array", "null", "nullArray". received "${type}" instead`,
     );
   }
 }
+
+const fnUser = (value) => value;
 
 /**
  * @param type number|string|boolean|array|null
@@ -72,23 +88,19 @@ function checkType(type) {
  * @returns
  */
 const attr = (type, serializer) => {
-  /*#__PURE__*/checkType(type);
-
-  const usedSerializer = serializer || (value => value);
+  /* #__PURE__ */checkType(type);
 
   return {
     isSJS: true,
     type,
-    serializer:
-      type === 'array' ? _makeArraySerializer(serializer) : usedSerializer,
+    serializer: TYPES[type]?.(serializer) || (serializer || fnUser),
   };
 };
 
 // Little utility for escaping convenience.
 // => if no regex is provided, a default one will be used.
 const _defaultRegex = new RegExp('\\n|\\r|\\t|\\"|\\\\', 'gm');
-const _escapeCallback = char => '\\' + char;
-const escape = (regex = _defaultRegex) => str => str.replace(regex, _escapeCallback);
+const _escapeCallback = (char) => '\\' + char;
+const escape = (regex = _defaultRegex) => (str) => str.replace(regex, _escapeCallback);
 
 export { __find, _find, escape, attr };
-

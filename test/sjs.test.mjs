@@ -1,5 +1,5 @@
-const { expect } = require('chai');
-const { sjs, escape, attr } = require('../dist/sjs');
+import { expect } from 'chai';
+import { sjs, escape, attr } from '../src/sjs.mjs';
 
 describe('Slow-json-stringify tests', () => {
   it('Should throw if unknown type is provided when defining a schema', () => {
@@ -333,5 +333,36 @@ describe('Slow-json-stringify tests', () => {
 
     expect(t.a).to.be.equal('a');
     expect(t.b.a).to.be.equal('a1');
+  });
+
+  it('Should stringify nullArray correctly', () => {
+    const stringify = sjs({
+      a: attr('nullArray',
+        sjs({
+          b: attr('string'),
+        })),
+    });
+
+    const test = {
+      a: null,
+    };
+    const test2 = {
+      a: [],
+    };
+    const test3 = {
+      a: [{
+        b: 'c',
+      }],
+    };
+    const slow = stringify(test);
+    const slow2 = stringify(test2);
+    const slow3 = stringify(test3);
+    const t = JSON.parse(slow);
+    const t2 = JSON.parse(slow2);
+    const t3 = JSON.parse(slow3);
+
+    expect(t.a).to.be.equal(null);
+    expect(t2.a).to.be.equal(undefined);
+    expect(t3.a[0].b).to.be.equal('c');
   });
 });
