@@ -47,7 +47,7 @@ function _arraySerializer(serializer, array) {
  * used for the serialization of arrais.
  */
 const _makeArraySerializer = (serializer) => {
-  if (serializer instanceof Function) return _arraySerializer.bind(this, serializer);
+  if (typeof serializer === 'function') return _arraySerializer.bind(this, serializer);
   return JSON.stringify;
 };
 
@@ -97,8 +97,8 @@ const attr = (type, serializer) => {
 
 // Little utility for escaping convenience.
 // => if no regex is provided, a default one will be used.
-const _defaultRegex = new RegExp('\\n|\\r|\\t|\\"|\\\\', 'gm');
-const _escapeCallback = (char) => '\\' + char;
-const escape = (regex = _defaultRegex) => (str) => str.replace(regex, _escapeCallback);
+const _defaultRegex = /[\t\n\r"\\]/g;
+const _escapeCallback = char => '\\' + char;
+const escape = (regex = _defaultRegex) => str => str.replace(regex, _escapeCallback);
 
 export { __find, _find, escape, attr };
