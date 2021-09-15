@@ -47,7 +47,7 @@ function _arraySerializer(serializer, array) {
  * used for the serialization of arrais.
  */
 const _makeArraySerializer = (serializer) => {
-  if (serializer instanceof Function) return _arraySerializer.bind(null, serializer);
+  if (serializer instanceof Function) return _arraySerializer.bind(this, serializer);
   return JSON.stringify;
 };
 
@@ -58,7 +58,7 @@ function _arrayNullSerializer(serializer, array) {
 
 const _makeNullArraySerializer = (serializer) => {
   const arraySerliazer = _makeArraySerializer(serializer);
-  return _arrayNullSerializer.bind(null, arraySerliazer);
+  return _arrayNullSerializer.bind(this, arraySerliazer);
 };
 
 const TYPES = {
