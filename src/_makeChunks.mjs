@@ -15,7 +15,6 @@ const _chunkRegex = /"\w+__sjs"/g;
  * chunks used in different scenarios.
  */
 const _makeChunks = (str, queue) => {
-  chunkRegex.lastIndex = 0;
   const chunks = str
       // Matching prepared properties and replacing with target with or without
       // double quotes.
