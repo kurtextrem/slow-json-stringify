@@ -11,7 +11,8 @@ export type AttrType =
   | 'number'
   | 'boolean'
   | 'array'
-  | 'null';
+  | 'null'
+  | 'nullArray';
 
 /**
  * SjsSchema
