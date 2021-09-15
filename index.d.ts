@@ -59,7 +59,7 @@ export type Serializer = (raw: any) => JSONPrimitive;
  * Utility used to define how sjs should handle the
  * provided raw data.
  */
-export function attr(type: 'array', serializer?: SjsSerializer): AttrExecutable;
+export function attr(type: 'array' | 'nullArray', serializer?: SjsSerializer): AttrExecutable;
 export function attr(type: AttrType, serializer?: Serializer): AttrExecutable;
 
 /**
