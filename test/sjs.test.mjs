@@ -335,21 +335,53 @@ describe('Slow-json-stringify tests', () => {
     expect(t.b.a).to.be.equal('a1');
   });
 
+
   it('Should stringify nullArray correctly', () => {
+    const stringify = sjs({
+      a: attr('nullArray', sjs({
+        b: attr('string'),
+      })),
+    });
+
+    const test2 = {
+      a: null,
+    };
+    const test3 = {
+      a: [{
+        b: 'c',
+      }],
+    };
+    const slow2 = stringify(test2);
+    const t2 = JSON.parse(slow2);
+    const slow3 = stringify(test3);
+    const t3 = JSON.parse(slow3);
+
+    expect(t2.a).to.be.equal(null);
+    expect(t3.a[0].b).to.be.equal('c');
+  });
+
+  it('Should stringify fake primitives correctly', () => {
+    function Url(s) {
+      this.value = s;
+    }
+
+    // eslint-disable-next-line no-multi-assign
+    Url.prototype.toString = Url.prototype.valueOf = function () { return this.value; };
+
     const stringify = sjs({
       a: attr('array', sjs({
         b: attr('string'),
       })),
     });
 
-    const test3 = {
+    const test = {
       a: [{
-        b: 'c',
+        b: new Url('c'),
       }],
     };
-    const slow3 = stringify(test3);
-    const t3 = JSON.parse(slow3);
+    const slow = stringify(test);
+    const t = JSON.parse(slow);
 
-    expect(t3.a[0].b).to.be.equal('c');
+    expect(t.a[0].b).to.be.equal('c');
   });
 });
