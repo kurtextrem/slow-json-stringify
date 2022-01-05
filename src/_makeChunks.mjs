@@ -4,7 +4,7 @@ const _chunkRegex = /"\w+?__sjs"/g
 
 /**
  * @param {string} str - prepared string already validated.
- * @param {array} queue - queue containing the property name to match
+ * @param {Array} queue - queue containing the property name to match
  * (used for building dynamic regex) needed for the preparation of
  * chunks used in different scenarios.
  */
@@ -40,9 +40,8 @@ const _makeChunks = (str, queue) => {
 		// - , => non-last non-string property
 		// - " => last string property
 		firstChar = chunk[0]
-		isQuote = firstChar === '"'
-		if (isQuote || firstChar === ',') withoutInitial = chunk.slice(1)
-		else if (isQuote && chunk[1] === ',') withoutInitial = chunk.slice(2)
+		if (firstChar === '"') withoutInitial = chunk.slice(chunk[1] === ',' ? 2 : 1)
+		else if (firstChar === ',') withoutInitial = chunk.slice(1)
 		else withoutInitial = chunk
 
 		result.push({

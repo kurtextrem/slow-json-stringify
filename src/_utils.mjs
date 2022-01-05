@@ -98,7 +98,7 @@ const attr = (type, serializer) => {
 // Little utility for escaping convenience.
 // => if no regex is provided, a default one will be used.
 const _defaultRegex = /[\t\n\r"\\]/g;
-const _escapeCallback = char => '\\' + char;
+const _escapeCallback = char => `\\${char}`;
 const escape = (regex = _defaultRegex) => str => str.replace(regex, _escapeCallback);
 
 export { __find, _find, escape, attr };
